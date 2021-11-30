@@ -1,1 +1,1 @@
-# kyopro_educational_90_swift
+競プロ典型90問をSwiftで実装する試み
