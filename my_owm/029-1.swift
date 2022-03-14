@@ -11,14 +11,14 @@ for _ in 1...n {
 	let lr = readIntArray()
 	let l = lr[0]
 	let r = lr[1]
-	var hightest = 0
+	var highest = 0
 	for i in l...r {
-		if height[i] > hightest {
-			hightest = height[i]
+		if height[i] > highest {
+			highest = height[i]
 		}
 	}
 	for i in l...r {
-		height[i] = hightest + 1
+		height[i] = highest + 1
 	}
-	print(hightest + 1)
+	print(highest + 1)
 }
