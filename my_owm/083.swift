@@ -63,7 +63,7 @@ for i in 0...n {
 }
 
 var state = [(updateTime: Int, qTime: Int)](repeating: (updateTime: 0, qTime: 0), count: n + 1)
-//updateTime: 書き換えがおきた（はずの）時間
+//updateTime: 書き換えがおきた時間
 //qTime: 指令が来た時間
 
 let qs = readInt()
