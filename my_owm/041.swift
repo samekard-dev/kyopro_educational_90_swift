@@ -96,14 +96,15 @@ if xMax == xMin {
 
 	//topLine以下の点を数える
 	//各範囲の左端は含めない。右端は含める。
-	//一番左をあらかじめ数える
-	var counter = topLine[0].y + 1
+	var counter = topLine[0].y + 1 //一番左をあらかじめ数える
 	for i in 1..<topLine.count {
 		let w = topLine[i].x - topLine[i - 1].x
 		let minY = min(topLine[i].y, topLine[i - 1].y)
 		let h = abs(topLine[i].y - topLine[i - 1].y)
-		let onCross = gcd(max(w, h), min(w, h))
-		counter += ((w + 1) * (h + 1) - (onCross + 1)) / 2 + (onCross + 1) - (topLine[i - 1].y - minY + 1) + w * minY
+		let onCross = gcd(max(w, h), min(w, h)) + 1
+		let triangle = ((w + 1) * (h + 1) - onCross) / 2
+		let underRect = (w + 1) * minY
+		counter += triangle + onCross + underRect - (topLine[i - 1].y + 1)
 	}
 	
 	//bottomLineより下の点を省く
@@ -112,8 +113,10 @@ if xMax == xMin {
 		let w = bottomLine[i].x - bottomLine[i - 1].x
 		let minY = min(bottomLine[i].y, bottomLine[i - 1].y)
 		let h = abs(bottomLine[i].y - bottomLine[i - 1].y)
-		let onCross = gcd(max(w, h), min(w, h))
-		counter -= ((w + 1) * (h + 1) - (onCross + 1)) / 2 - (bottomLine[i - 1].y - minY) + w * minY
+		let onCross = gcd(max(w, h), min(w, h)) + 1
+		let triangle = ((w + 1) * (h + 1) - onCross) / 2
+		let underRect = (w + 1) * minY
+		counter -= triangle + underRect - bottomLine[i - 1].y
 	}
 	
 	print(counter - n)
