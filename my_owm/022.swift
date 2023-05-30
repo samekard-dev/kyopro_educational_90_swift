@@ -1,3 +1,5 @@
+//証明はまだできてないが提出したらACになった。
+
 func readIntArray() -> [Int] {
     readLine()!.split(separator: " ").map { Int(String($0))! }
 }
