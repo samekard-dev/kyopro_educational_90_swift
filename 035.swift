@@ -6,82 +6,93 @@ func readInts() -> [Int] {
     readLine()!.split(separator: " ").map { Int(String($0))! }
 }
 
-var log2: [Int : Int] = [:]
-do {
+let log2: [Int : Int] = {
+    var log2: [Int : Int] = [:]
     var i = 1
     var j = 0
-    for _ in 0...20 {
+    while j <= 20 {
         log2[i] = j
         i *= 2
         j += 1
     }
-}
+    return log2
+}()
 
 let n = readInt()
 //connection
-var conn = [(p: Int, c: Set<Int>)](repeating: (p: -1, c: []), count: n + 1)
-for _ in 1...n - 1 {
-    let edge = readInts()
-    conn[edge[0]].c.insert(edge[1])
-    conn[edge[1]].c.insert(edge[0])
-}
-func setP(n: Int, p: Int) {
-    conn[n].p = p
-    conn[n].c.remove(p)
-    for c in conn[n].c {
-        setP(n: c, p: n)
+let conn: [(p: Int, c: Set<Int>)] = {
+    var conn = [(p: Int, c: Set<Int>)](repeating: (p: -1, c: []), count: n + 1)
+    for _ in 1...n - 1 {
+        let edge = readInts()
+        conn[edge[0]].c.insert(edge[1])
+        conn[edge[1]].c.insert(edge[0])
     }
-}
-setP(n: 1, p: -1)
+    func setP(n: Int, p: Int) {
+        conn[n].p = p
+        conn[n].c.remove(p)
+        for c in conn[n].c {
+            setP(n: c, p: n)
+        }
+    }
+    setP(n: 1, p: -1)
+    return conn
+}()
 
-var h = [Int](repeating: -1, count: n + 1)
-func setH(n: Int, hh: Int) {
-    h[n] = hh
-    for c in conn[n].c {
-        setH(n: c, hh: hh + 1)
+let h: [Int] = {
+    var h = [Int](repeating: -1, count: n + 1)
+    func setH(n: Int, hh: Int) {
+        h[n] = hh
+        for c in conn[n].c {
+            setH(n: c, hh: hh + 1)
+        }
     }
-}
-setH(n: 1, hh: 0)
+    setH(n: 1, hh: 0)
+    return h
+}()
 
-var order = [Int](repeating: -1, count: n + 1)
-var orderCounter = 0
-func setOrder(n: Int) {
-    order[n] = orderCounter
-    orderCounter += 1
-    for c in conn[n].c {
-        setOrder(n: c)
+let order: [Int] = {
+    var order = [Int](repeating: -1, count: n + 1)
+    var orderCounter = 0
+    func setOrder(n: Int) {
+        order[n] = orderCounter
+        orderCounter += 1
+        for c in conn[n].c {
+            setOrder(n: c)
+        }
     }
-}
-setOrder(n: 1)
+    setOrder(n: 1)
+    return order
+}()
 
 //ancestor:先祖
-var acLength = 1
-//description
-var acDesc = 1 
-while acDesc < n - 1 {
-    acLength += 1
-    acDesc *= 2
-}
-var ac = [[Int]](repeating: [Int](repeating: 1, count: acLength), count: n + 1)
-
-var pass: [Int] = []
-
-func setAc(n: Int, pass: inout [Int]) {
-    var target = 1
-    var pos = 0
-    while target <= h[n] {
-        ac[n][pos] = pass[pass.count - target]
-        target *= 2
-        pos += 1
+var acLength = 0
+let ac: [[Int]] = {
+    acLength = 1
+    var acDesc = 1 //description
+    while acDesc < n - 1 { //一直線に並べた時に左端から右端の距離は n - 1 なので必要な値は n - 1
+        acLength += 1
+        acDesc *= 2
     }
-    
-    pass.append(n)
-    for c in conn[n].c {
-        setAc(n: c, pass: &pass)
+    var ac = [[Int]](repeating: [Int](repeating: 1, count: acLength), count: n + 1)
+    var path: [Int] = []
+    func setAc(n: Int) {
+        var target = 1
+        var pos = 0
+        while target <= h[n] {
+            ac[n][pos] = path[path.count - target]
+            target *= 2
+            pos += 1
+        }
+        
+        path.append(n)
+        for c in conn[n].c {
+            setAc(n: c)
+        }
+        path.removeLast()
     }
-    pass.removeLast()
-}
-setAc(n: 1, pass: &pass)
+    setAc(n: 1)
+    return ac
+}()
 
 func searchAc(n: Int, d: Int) -> Int {
     if d == 0 {
@@ -120,3 +131,4 @@ for _ in 0..<q {
     }
     print(ans)
 }
+
