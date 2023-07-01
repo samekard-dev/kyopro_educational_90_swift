@@ -38,10 +38,12 @@ let conn: [(p: Int, c: Set<Int>)] = {
     return conn
 }()
 
+var maxH = 0
 let h: [Int] = {
     var h = [Int](repeating: -1, count: n + 1)
     func setH(n: Int, hh: Int) {
         h[n] = hh
+        maxH = max(maxH, hh)
         for c in conn[n].c {
             setH(n: c, hh: hh + 1)
         }
@@ -69,7 +71,7 @@ var acLength = 0
 let ac: [[Int]] = {
     acLength = 1
     var acDesc = 1 //description
-    while acDesc < n - 1 { //一直線に並べた時に左端から右端の距離は n - 1 なので必要な値は n - 1
+    while acDesc < maxH { //必要な値はmaxH
         acLength += 1
         acDesc *= 2
     }
@@ -131,4 +133,3 @@ for _ in 0..<q {
     }
     print(ans)
 }
-
