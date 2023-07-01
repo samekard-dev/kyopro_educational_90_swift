@@ -1,4 +1,4 @@
-//方針を調べるときのキーワードは「BIT」
+//この解き方の方針を調べるときのキーワードは「BIT」
 
 func readInts() -> [Int] {
     readLine()!.split(separator: " ").map { Int(String($0))! }
@@ -11,7 +11,9 @@ class Bit {
     init(maxValue: Int, first: Int) {
         self.maxValue = maxValue
         self.indexOffset = 1 - first
-        store = [Int](repeating: 0, count: maxValue + 1)
+        store = [Int](repeating: 0, count: maxValue + indexOffset + 1)
+        //0-4 は 1-5 に変換されるので要素数6
+        //1-4 は そのまま 1-4 なので要素数5
     }
     
     func add(pos: Int, value: Int) {
