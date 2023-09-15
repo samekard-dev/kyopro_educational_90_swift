@@ -6,7 +6,7 @@ func readInt() -> Int {
 	Int(readLine()!)!
 }
 
-//入力: 範囲
+//入力: 範囲(lとrの内側の個数)
 //出力: 選択した場所。左端が0で。
 func getNext(range: Int) -> Int {
 	Int(Double(range) * golden)
@@ -19,7 +19,8 @@ for _ in 1...t {
 	
 	let n = readInt() //1からn
 	var values = [Int](repeating: 0, count: n + 2)
-	
+
+	//lとrは範囲の外側にセットする
 	var l = 0
 	var r = n + 1
 	var c = 1 + getNext(range: n)
@@ -35,6 +36,7 @@ for _ in 1...t {
 		let lRange = c - l - 1
 		let rRange = r - c - 1
 		if lRange == 0 && rRange == 0 {
+			//lとrは最高値になることはない
 			print("!", values[c])
 			fflush(stdout)
 			break
