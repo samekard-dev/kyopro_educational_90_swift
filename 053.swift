@@ -7,7 +7,7 @@ func readInt() -> Int {
 }
 
 //入力: 範囲(lとrの内側の個数)
-//出力: 選択した場所。左端が0で。
+//出力: 選択した場所。0開始。
 func getNext(range: Int) -> Int {
 	Int(Double(range) * golden)
 }
@@ -36,7 +36,7 @@ for _ in 1...t {
 		let lRange = c - l - 1
 		let rRange = r - c - 1
 		if lRange == 0 && rRange == 0 {
-			//lとrは最高値になることはない
+			//lとrは最高値になることはないので真ん中を選択すればよい
 			print("!", values[c])
 			fflush(stdout)
 			break
@@ -72,6 +72,7 @@ for _ in 1...t {
 			c = vR
 			l = vL
 		} else {
+			//values[vL] == values[vR]のときは間が必ず1つ以上存在する
 			l = vL
 			r = vR
 			c = l + 1 + getNext(range: r - l - 1)
