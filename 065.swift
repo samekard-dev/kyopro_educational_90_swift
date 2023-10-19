@@ -7,7 +7,7 @@ func speedPow(x: Int, n: Int, mod: Int) -> Int {
     var n = n
     var p = 1
     var q = x
-    while true {
+    while n != 0 {
         if n % 2 == 1 {
             p *= q
             p %= mod
@@ -15,9 +15,6 @@ func speedPow(x: Int, n: Int, mod: Int) -> Int {
         q *= q
         q %= mod
         n /= 2
-        if n == 0 {
-            break
-        }
     }
     return p
 }
