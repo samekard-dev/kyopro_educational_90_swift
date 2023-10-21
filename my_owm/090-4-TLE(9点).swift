@@ -232,7 +232,6 @@ for j in 1..<c.count {
     c[j] = (p - ans[j]) % p //ans[j] == 0を考慮する
 }
 
-
 print(bostanMori(a: [1], b: c, n: n + 1))
 
 /*
