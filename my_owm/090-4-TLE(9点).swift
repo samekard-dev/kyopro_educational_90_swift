@@ -1,5 +1,3 @@
-//90
-
 import Foundation
 
 let p = 998244353 // NTTに相性の良いmodは998244353．
