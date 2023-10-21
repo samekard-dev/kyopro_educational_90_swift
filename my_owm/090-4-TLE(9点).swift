@@ -1,3 +1,5 @@
+//90
+
 import Foundation
 
 let p = 998244353 // NTTに相性の良いmodは998244353．
@@ -54,7 +56,6 @@ func ntt(source1: inout [Int], source2: inout [Int], depth: Int, inv: Bool, star
     //  例：下から上がってきたものが2に書かれている場合、2の情報を基に1に書いて上に返す。
     // source1はsource2はすべての計算で共有する。開始インデックスと間隔を受け取る必要がある。
     // stepは、この回の結果を書き込むときの間隔。初回は1。
-    
     if length == 1 {
         // サイズが1であるときは，それがそのままNTTである．
         return 1
@@ -78,11 +79,11 @@ func ntt(source1: inout [Int], source2: inout [Int], depth: Int, inv: Bool, star
             let rE = start + i * step * 2 //re:read even
             let rO = start + step + i * step * 2 //ro:read odd
             if wrote == 1 {
-                source2[w1] = (source1[rE] + source1[rO] * now) % p
-                source2[w2] = (source1[rE] + source1[rO] * (((p - 1) * now) % p)) % p
+                source2[w1] = (source1[rE] + (source1[rO] * now) % p) % p
+                source2[w2] = (source1[rE] + (source1[rO] * (((p - 1) * now) % p)) % p) % p
             } else {
-                source1[w1] = (source2[rE] + source2[rO] * now) % p
-                source1[w2] = (source2[rE] + source2[rO] * (((p - 1) * now) % p)) % p
+                source1[w1] = (source2[rE] + (source2[rO] * now) % p) % p
+                source1[w2] = (source2[rE] + (source2[rO] * (((p - 1) * now) % p)) % p) % p
             }
             now = (now * r) % p
         }
