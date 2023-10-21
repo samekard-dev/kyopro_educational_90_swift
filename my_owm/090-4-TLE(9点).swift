@@ -50,30 +50,39 @@ var invroot: [Int] = makeInvroot(root: root, mod: p)
 
 func ntt(source1: inout [Int], source2: inout [Int], depth: Int, inv: Bool, start: Int, step: Int, length: Int) -> Int {
     // inv=false ならば普通のNTT，inv=true ならばINTTになるようにする
-    // サイズが1であるときは，それがそのままNTTである．
+    // 結果をsource1かsource2のどちらかに書き込む。書いた方の番号をリターンする。
+    //  例：下から上がってきたものが2に書かれている場合、2の情報を基に1に書いて上に返す。
+    // source1はsource2はすべての計算で共有する。開始インデックスと間隔を受け取る必要がある。
+    // stepは、この回の結果を書き込むときの間隔。初回は1。
+    
     if length == 1 {
+        // サイズが1であるときは，それがそのままNTTである．
         return 1
+    } else if length == 2 {
+        let w1 = start //w:write
+        let w2 = start + step
+        let rE = start //re:read even
+        let rO = start + step //ro:read odd
+        source2[w1] = (source1[rE] + source1[rO]) % p
+        source2[w2] = (source1[rE] + (source1[rO] * (p - 1)) % p) % p
+        return 2
     } else {
         // evenとoddのDFTを，再帰的に求める．
         let wrote = ntt(source1: &source1, source2: &source2, depth: depth - 1, inv: inv, start: start, step: step * 2, length: length / 2)
         _ = ntt(source1: &source1, source2: &source2, depth: depth - 1, inv: inv, start: start + step, step: step * 2, length: length / 2)
         let r = inv ? invroot[depth] : root[depth]
         var now = 1
-        var half = 1
-        for _ in 0..<length / 2 {
-            half = (half * r) % p
-        }
         for i in 0..<length / 2 {
-            let wroteIndex1 = start + i * step
-            let wroteIndex2 = start + (i + length / 2) * step
-            let indexE = start + i * step * 2
-            let indexO = start + step + i * step * 2
+            let w1 = start + i * step //w:write
+            let w2 = start + (i + length / 2) * step
+            let rE = start + i * step * 2 //re:read even
+            let rO = start + step + i * step * 2 //ro:read odd
             if wrote == 1 {
-                source2[wroteIndex1] = (source1[indexE] + (now * source1[indexO]) % p) % p
-                source2[wroteIndex2] = (source1[indexE] + ((half * now) % p * source1[indexO]) % p) % p
+                source2[w1] = (source1[rE] + source1[rO] * now) % p
+                source2[w2] = (source1[rE] + source1[rO] * (((p - 1) * now) % p)) % p
             } else {
-                source1[wroteIndex1] = (source2[indexE] + (now * source2[indexO]) % p) % p
-                source1[wroteIndex2] = (source2[indexE] + ((half * now) % p * source2[indexO]) % p) % p
+                source1[w1] = (source2[rE] + source2[rO] * now) % p
+                source1[w2] = (source2[rE] + source2[rO] * (((p - 1) * now) % p)) % p
             }
             now = (now * r) % p
         }
@@ -179,21 +188,52 @@ func polynomialInverse(c: [Int], l: Int) -> [Int] {
     return a
 }
 
+func bostanMori(a: [Int], b: [Int], n: Int) -> Int {
+    var a = a
+    var b = b
+    var n = n
+    while n > 0 {
+        var bBar = b
+        for i in stride(from: 1, to: bBar.count, by: 2) {
+            bBar[i] = (p - b[i]) % p
+        }
+        let aa = convolution(a: a, b: bBar)
+        let bb = convolution(a: b, b: bBar)
+        a = [Int](repeating: 0, count: (aa.count + 1) / 2)
+        for i in stride(from: n % 2, to: aa.count, by: 2) {
+            a[i / 2] = aa[i]
+        }
+        b = [Int](repeating: 0, count: bb.count / 2)
+        for i in stride(from: 0, to: bb.count, by: 2) {
+            b[i / 2] = bb[i]
+        }
+        n /= 2
+    }
+    let bInv = modInv(x: b[0], mod: p)
+    return (a[0] * bInv) % p
+}
+
 let nk = readInts()
 let n = nk[0]
 let k = nk[1]
-var dp = [[Int]](repeating: [], count: k + 1)
-dp[k] = [1, 1, 1]
-for i in stride(from: k - 1, through: 0, by: -1) {
+var ans = [1, 1, 1]
+for i in stride(from: k - 1, through: 1, by: -1) {
     let limit = i == 0 ? n : min(k / i, n)
-    var c = [Int](repeating: 0, count: dp[i + 1].count)
+    var c = [Int](repeating: 0, count: ans.count)
     c[0] = 1
     for j in 1..<c.count {
-        c[j] = (p - dp[i + 1][j]) % p //dp[i + 1][j] == 0を考慮する
+        c[j] = (p - ans[j]) % p //ans[j] == 0を考慮する
     }
-    dp[i] = polynomialInverse(c: c, l: limit + 2)
+    ans = polynomialInverse(c: c, l: limit + 2)
 }
-print(dp[0][n + 1])
+var c = [Int](repeating: 0, count: ans.count)
+c[0] = 1
+for j in 1..<c.count {
+    c[j] = (p - ans[j]) % p //ans[j] == 0を考慮する
+}
+
+
+print(bostanMori(a: [1], b: c, n: n + 1))
 
 /*
  k+1の段p(x)とkの段f(x)の掛け算は
