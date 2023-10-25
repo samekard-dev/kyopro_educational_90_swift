@@ -28,7 +28,7 @@ func check(p: Int) -> Int { //p: piece
 var short = 1
 var long = l
 /*
- 二部探索で
+ 二分探索で
  short : k + 1獲れる(越えているかもしれない)
  long : k + 1に足りない
  としながら
