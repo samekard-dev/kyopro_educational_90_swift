@@ -138,8 +138,6 @@ func convolution(a: [Int], b: [Int]) -> [Int] {
 // ここから使用例
 //**************************************************
 
-/*
-
 func readInts() -> [Int] {
     readLine()!.split(separator: " ").map { Int(String($0))! }
 }
@@ -158,6 +156,4 @@ func main() {
         print(c[i])
     }
 }
-
-*/
 
