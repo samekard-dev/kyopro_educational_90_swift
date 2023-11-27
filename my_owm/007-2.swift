@@ -19,7 +19,6 @@ if n >= 2 {
 }
 
 let q = readInt()
-var sum = 0
 for _ in 0..<q {
 	let rating = readInt()
 	var ok = 0
