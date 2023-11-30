@@ -40,7 +40,7 @@ for i in 1...n {
 }
 
 func ncr(n: Int, r: Int) -> Int {
-    if n == r {
+    if n == r || r == 0 {
         return 1
     }
     return fact[n] * factInv[n - r] % tenNineSeven * factInv[r] % tenNineSeven
