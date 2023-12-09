@@ -33,29 +33,36 @@ for selected in 1..<(1 << n) {
     }
 }
 
-//dp[k][selected]
-//selectedをk分割した中での最低コスト
-var dp = [[Int]](repeating: [Int](repeating: Int.max, count: 1 << n), count: kN + 1)
+//dp[selected]
+//selectedを分割した中での最低コスト
+//分割の個数はforブロックの中で1分割、2分割...と増えていく
+var dp = [Int](repeating: Int.max, count: 1 << n)
 for i in 0..<(1 << n) {
-    dp[1][i] = cost[i]
+    dp[i] = cost[i]
 }
 
 //あるselectedのk分割は
-//1とk-1(調査済)を足すと考える
-//oneGは全部でひとつのグループ
-//selected - oneGはk - 1個のグループ
+//k-1(調査済)と1を足すと考える
 for k in 2...kN {
+    var newDp = [Int](repeating: Int.max, count: 1 << n)
     for selected in 1..<(1 << n) {
         if selected.nonzeroBitCount < k {
             continue
         }
-        var oneG = (selected - 1) & selected
-        while oneG != 0 {
-            dp[k][selected] = min(dp[k][selected], max(dp[k - 1][selected - oneG], cost[oneG]))
-            oneG = (oneG - 1) & selected
+        var selected2 = selected
+        while true {
+            selected2 = (selected2 - 1) & selected
+            if selected2 == 0 {
+                break
+            }
+            if selected2.nonzeroBitCount < k - 1 {
+                continue
+            }
+            newDp[selected] = min(newDp[selected], max(dp[selected2], cost[selected - selected2]))
         }
     }
+    dp = newDp
 }
 
-print(dp[kN][(1 << n) - 1])
+print(dp[(1 << n) - 1])
 
