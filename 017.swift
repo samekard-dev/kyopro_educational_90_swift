@@ -5,20 +5,20 @@ func readInts() -> [Int] {
 }
 
 class Bit {
-    var maxValue = 0
+    var elements = 0
     var indexOffset = 0
     var store: [Int]
-    init(maxValue: Int, first: Int) {
-        self.maxValue = maxValue
+    init(elements: Int, first: Int) {
+        self.elements = elements
         self.indexOffset = 1 - first
-        store = [Int](repeating: 0, count: maxValue + indexOffset + 1)
-        //0-4 は 1-5 に変換されるので要素数6
-        //1-4 は そのまま 1-4 なので要素数5
+        store = [Int](repeating: 0, count: elements + 1)
+        //0-4 (elements 5) は 1-5 に変換されて配列の要素数は 6
+        //1-4 (elements 4) は そのまま 1-4 なので配列の要素数は 5
     }
     
     func add(pos: Int, value: Int) {
         var pos2 = pos + indexOffset
-        while pos2 <= maxValue {
+        while pos2 <= elements {
             store[pos2] += value
             pos2 += pos2 & -pos2 //最終ビットを足す。例 1->2 6->8
         }
@@ -39,7 +39,7 @@ let nm = readInts()
 let n = nm[0]
 let m = nm[1]
 
-var bit = Bit(maxValue: n, first: 1) //場所は1-indexなので
+var bit = Bit(elements: n, first: 1) //場所は1-indexなので
 
 var lines = [[Int]](repeating: [], count: n + 1)
 for _ in 1...m {
