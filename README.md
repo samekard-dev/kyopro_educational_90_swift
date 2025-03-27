@@ -15,3 +15,9 @@
 ## materialフォルダ
 
 再利用出来そうなものを入れる
+
+# ほか
+
+ヒント集を書きました。
+
+https://zenn.dev/samekard_dev/books/625f896cc62aef
